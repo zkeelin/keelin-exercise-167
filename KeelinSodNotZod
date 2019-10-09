@@ -1,0 +1,357 @@
+//Zachary Keelin
+//10/04/2019
+//CPT 167
+//Create SodNotZod using methods and concepts learned from module 5
+package edu.cpt167.keelin.participation;
+import java.util.Scanner;
+public class SodNotZod 
+{//START CLASS
+
+	//DECLARE AND INITIALIZE CLASS CONSTANTS
+	public static final double DISCOUNT_RATE_MEMBER = .15;  
+	public static final double DISCOUNT_RATE_SENIOR = .25;	
+	public static final double DISCOUNT_RATE_NONE = 0.0;	
+	public static final double TAX_RATE = .075;
+	public static final String NAME_PREMIUM = "  Jedi Tree";
+	public static final String NAME_SPECIAL = "Elvish Tree";	
+	public static final String NAME_BASIC = "Orcish Tree";	
+	public static final double PREMIUM_PRICE = 750;	
+	public static final double SPECIAL_PRICE = 500;	
+	public static final double BASIC_PRICE = 250;
+	public static final int RESET_VALUE = 0;
+
+	//**************************MAIN METHOD***************************
+	public static void main(String[] args) 
+	{//START MAIN METHOD
+
+		//DECLARE AND INITIALIZE MAIN"S VARIABLES
+		String userName = "";
+		char menuSelect = ' ';
+		char itemSelect = ' ';
+		String itemName = "";
+		int howManyEach = 0;
+		double itemPrice = 0.0;
+		double discountRate = 0.0;
+		double discountPrice = 0.0;
+		double discountAmt = 0.0;
+		double subTotal = 0.0;
+		double tax = 0.0;
+		double totalCost = 0.0;
+		double grandTotal = 0.0;
+		double customerTotal = 0.0;
+		int howManyItems = 0;
+		int memberCount = 0;
+		int seniorCount = 0;
+		int noneCount = 0;
+		int itemCounter = 0;
+		int premiumCounter = 0;
+		int specialCounter = 0;
+		int basicCounter = 0;
+
+
+		//Import Scanner
+		Scanner input = new Scanner(System.in);
+
+
+		//INTRODUCTION
+
+
+		//DISPLAY WELCOME BANNER
+		displayWelcomeBanner();
+
+
+		//ASSIGN USER NAME
+		userName = getUserName(input);
+
+
+		// MAIN MENU - DISPLAY - INPUT - VALIDATION LOOP - ASSIGN menuSelect
+		menuSelect = validateMainMenu(input);
+
+
+		//RUN REPITETION STRUCTURE RUN WHILE NOT Q
+		while(menuSelect != 'Q')
+		{//START RUN REPITETION STRUCTURE RUN WHILE NOT Q
+
+			//HOW MANY ITEMS SELECT - DISPLAY - INPUT - VALIDATION LOOP - ASSIGN HOWMANYITEMS
+			howManyItems = validateHowManyItems(input);
+			while (itemCounter < howManyItems)
+			{//START ITEM LOOP
+				//ITEM MENU - DISPLAY - INPUT - VALIDATION LOOP - ASSIGN itemSelect
+				itemSelect = validateItemSelect(input);
+
+				//GET HOWMANY
+				howManyEach = validateHowManyEach(input);
+
+				//BODY
+
+				//MENU SELECT SELECTION STRUCTURE
+				if (menuSelect == 'A')
+				{//START IF
+					discountRate = DISCOUNT_RATE_MEMBER;
+					memberCount++;
+				}//END IF
+				else if (menuSelect == 'B')
+				{//START ELSE IF
+					discountRate = DISCOUNT_RATE_SENIOR;
+					seniorCount++;
+				}//END ELSE IF
+				else
+				{//START ELSE
+					discountRate = DISCOUNT_RATE_NONE;
+					noneCount++;
+				}//END ELSE 
+
+				//ITEM SELECT SELECTION STRUCTURE
+				if (itemSelect == 'A')
+				{//START IF
+					itemName = NAME_PREMIUM;
+					itemPrice = PREMIUM_PRICE;
+					premiumCounter ++;
+				}//END IF
+				else if (itemSelect == 'B')
+				{//START ELSE IF
+					itemName = NAME_SPECIAL;
+					itemPrice = SPECIAL_PRICE;
+					specialCounter ++;
+				}//END ELSE IF
+				else
+				{//START ELSE
+					itemName = NAME_BASIC;
+					itemPrice = BASIC_PRICE;
+					basicCounter ++;
+				}//END ELSE
+
+				discountAmt = itemPrice * discountRate;
+				discountPrice = itemPrice - discountAmt;
+				subTotal = howManyEach * discountPrice;
+				tax = subTotal * TAX_RATE;
+				totalCost = subTotal + tax;
+				grandTotal = grandTotal + totalCost;
+				customerTotal = customerTotal + totalCost;
+
+				//CONCLUSION
+				displayItemReceipt(userName, itemName, itemPrice, discountAmt, discountPrice, howManyEach, 
+						subTotal, tax, totalCost);
+
+				//UPDATE ITEM COUNTER
+				itemCounter++;
+			}//END ITEM COUNTER LOOP
+
+			if (howManyItems > 0)
+			{//START IF
+				displayCustomerReport(howManyItems, customerTotal);
+			}//END IF
+
+			//UPDATE READ - Back to MAIN MENU		
+			itemCounter = RESET_VALUE;
+			customerTotal = RESET_VALUE;
+			menuSelect = validateMainMenu(input);
+		}//END RUN REPITETION STRUCTURE RUN WHILE NOT Q
+
+
+		if (grandTotal > 0)
+		{//START IF STATEMENT GRANDTOTAL
+			displayItemReceipt(memberCount, seniorCount, noneCount, premiumCounter, specialCounter, basicCounter, grandTotal);
+		}//END IF STATEMENT GRANDTOTAL
+
+		//DISPLAY FAREWELL MESSAGE
+		displayFarewellMessage();
+
+		//CLOSE SCANNER
+		input.close();
+
+	}//END MAIN METHOD
+
+	//CREATE METHOD displayWelcomeBanner	
+	public static void displayWelcomeBanner()
+	{//START displayWelcomeBanner
+		System.out.println("Welcome to Sod Not Zod!\n");
+
+		System.out.println("This program will guide you through the process");
+		System.out.println("of placing an order with Sod Not Zod");
+
+		System.out.println("Thank you for using Sod checkout!\n");
+	}//END displayWelcomeBanner
+
+	//CREATE METHOD getUserName	
+	public static String getUserName(Scanner borrowedInput)
+	{//START getUserName
+		String localUserName = "";
+		displayUsernamePrompt();
+		localUserName = borrowedInput.nextLine();
+		return localUserName;
+	}//END getUserName
+
+	//CREATE METHOD validateMainMenu
+	public static char validateMainMenu(Scanner borrowedInput)
+	{//START validateMainMenu
+		char localMenuSelect = ' ';
+		displayMainMenu();
+		localMenuSelect = borrowedInput.next().toUpperCase().charAt(0);
+		//VALIDATION LOOP
+		while (localMenuSelect != 'A' && localMenuSelect != 'B' && localMenuSelect != 'C' && localMenuSelect != 'Q')
+		{//START VALIDATION LOOP
+			displayErrorMessage();
+			displayMainMenu();
+			localMenuSelect = borrowedInput.next().toUpperCase().charAt(0);
+		}//END VALIDATION LOOP
+		return localMenuSelect;
+	}//END validateMainMenu	
+
+	//CREATE METHOD validateHowManyItems();
+	public static int validateHowManyItems(Scanner borrowedInput)
+	{//Start validateHowManyItems
+		int localHowManyItems = 0;
+		displayHowManyItemsPrompt();
+		localHowManyItems = borrowedInput.nextInt();
+		//VALIDATION LOOP
+		while (localHowManyItems > 10)
+		{//START VALIDATION LOOP
+			displayErrorMessage();
+			displayHowManyItemsPrompt();
+			localHowManyItems = borrowedInput.nextInt();
+		}//END VALIDATION LOOP
+		return localHowManyItems;
+	}//END validateHowManyItems
+
+	//CREATE METHOD	validateItemSelect
+	public static char validateItemSelect(Scanner borrowedInput)
+	{//START validateItemSelect
+		char localItemSelect = ' ';
+		displayItemMenu();
+		localItemSelect = borrowedInput.next().toUpperCase().charAt(0);
+		//VALIDATION LOOP
+		while (localItemSelect != 'A' && localItemSelect != 'B' && localItemSelect != 'C')
+		{//START VALIDATION LOOP
+			displayErrorMessage();
+			displayItemMenu();
+			localItemSelect = borrowedInput.next().toUpperCase().charAt(0);
+		}//END VALIDATION LOOP
+		return localItemSelect;	
+	}//END validateItemSelect
+
+	//CREATE METHOD	validateHowManyEach
+	public static int validateHowManyEach(Scanner borrowedInput)
+	{//START getHowManyEach
+		int localHowManyEach = 0;
+		displayHowManyPrompt();
+		localHowManyEach = borrowedInput.nextInt();
+		//VALIDATION LOOP
+		while (localHowManyEach > 10)
+		{//Start VALIDATION LOOP
+			displayErrorMessage();
+			displayHowManyPrompt();
+			localHowManyEach = borrowedInput.nextInt();
+		}//End VALIDATION LOOP
+		return localHowManyEach;
+	}//END getHowManyEach
+
+	//CREATE METHOD displayHowManyPrompt();
+	public static void displayHowManyPrompt()
+	{//START displayHowManyPrompt();
+		System.out.println("How many saplings would you like to purchase?");
+		System.out.println("NOTE: You can not have more than 10 items.");
+	}//END displayHowManyPrompt();	
+
+	//CREATE METHOD	displayItemReceipt
+	public static void displayItemReceipt(String borrowedUserName, String borrowedItemName, double borrowedItemPrice,
+			double borrowedDiscountAmt, double borrowedDiscountPrice, int borrowedHowMany, double borrowedSubTotal,
+			double borrowedTax, double borrowedTotalCost)
+	{//START displayItemReceipt
+		System.out.println("PRINTING RECEIPT");
+		System.out.println("***********************************************************");
+		System.out.printf("%-8s%s\n", "User:", borrowedUserName);
+		System.out.printf("%s%25s\n%s%19s%8.2f\n", "Item Name:", "Price:", borrowedItemName, "$", borrowedItemPrice);
+
+		System.out.println("-----------------------------------------------------------\n");
+		System.out.printf("%s%15s%8.2f%s\n","Discount Price:", "$", borrowedDiscountPrice, "/per item");
+		System.out.printf("%s%21s%8.2f%s\n", "You save:", "$", borrowedDiscountAmt, "/per item");
+		System.out.println("-----------------------------------------------------------");
+
+		System.out.printf("%s%25d%s\n\n", "Quantity:", borrowedHowMany, "/items");	
+		System.out.printf("%s%21s%8.2f\n", "Sub Total:", "$", borrowedSubTotal);
+		System.out.printf("%s%27s%8.2f\n", "Tax:", "$", borrowedTax);
+		System.out.printf("%s%25s%8.2f\n", "Total:", "$", borrowedTotalCost);
+		System.out.println("***********************************************************\n\n");
+	}//END displayItemReceipt
+
+	//CREATE METHOD	displayFinalReport
+	public static void displayItemReceipt(int borrowedMemberCount, int borrowedSeniorCount,
+			int borrowedNoneCount, int borrowedPremiumCounter, int borrowedSpecialCounter,
+			int borrowedBasicCounter, double borrowedGrandTotal)
+	{//START displayFinalReport
+		int totalDiscuntCount = (borrowedMemberCount + borrowedSeniorCount);
+		System.out.println("***********************************************************");
+		System.out.printf("%-25s%d\n", "Membership Discount:", borrowedMemberCount);
+		System.out.printf("%-25s%d\n", "Senior Discount:", borrowedSeniorCount);
+		System.out.printf("%-25s%d\n", "No Discount:", borrowedNoneCount);
+		System.out.printf("%-25s%d\n", "Premium", borrowedPremiumCounter);
+		System.out.printf("%-25s%d\n", "Special", borrowedSpecialCounter);
+		System.out.printf("%-25s%d\n", "Basic", borrowedBasicCounter);
+		System.out.printf("%-25s%d\n", "Total Discounts Used:", totalDiscuntCount);
+		System.out.printf("%-25s%s%8.2f\n", "Grand Total Price:", "$", borrowedGrandTotal);
+		System.out.println("***********************************************************\n\n");
+	}//END displayFinalReport
+
+	//CREATE METHOD	displayFarewellMessage
+	public static void displayFarewellMessage()
+	{//START displayFareWellMessage
+		System.out.println("Thank you for visiting us");
+		System.out.println("Have a great day!");
+	}//END displayFareWellMessage
+
+	//CREATE METHOD displayMainMenu
+	public static void displayMainMenu()
+	{//START dilayMainMenu
+		System.out.printf("%33s\n", "MAIN MENU");
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		System.out.printf("%s%20s%10.1f%s\n", "TYPE [A]", "Member Discount", (DISCOUNT_RATE_MEMBER*100), "%");
+		System.out.printf("%s%20s%10.1f%s\n", "TYPE [B]", "Senior Discount", (DISCOUNT_RATE_SENIOR*100), "%");
+		System.out.printf("%s%16s\n", "TYPE [C]", "No Discount");
+		System.out.printf("%s%9s\n", "TYPE [Q]", "QUIT");
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		System.out.println("Please select an option");
+	}//END displayMainMenu
+
+	//CREATE METHOD displayErrorMessage
+	public static void displayErrorMessage()
+	{//START displayErrorMessage()
+		System.out.println("***INVALID SELECTION***");
+		System.out.println("Please try again");
+	}//END displayErrorMessage()
+
+	//CREATE METHOD displayItemMenu
+	public static void displayItemMenu()
+	{//START displayItemMenu
+		System.out.printf("%33s\n", "ITEM MENU");
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		System.out.printf("%-20s%s%5s%8.2f\n", "TYPE [A]", NAME_PREMIUM, "$", PREMIUM_PRICE);
+		System.out.printf("%-20s%s%5s%8.2f\n", "TYPE [B]", NAME_SPECIAL, "$", SPECIAL_PRICE);
+		System.out.printf("%-20s%s%5s%8.2f\n", "TYPE [C]", NAME_BASIC, "$", BASIC_PRICE);
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		System.out.println("Please select an option");
+	}//END displayItemMenu
+
+	public static void displayUsernamePrompt()
+	{//START displayUsernamePrompt
+		System.out.println("Enter you name to get started");
+	}//END displayUsernamePrompt
+
+	//CREATE METHOD displayHowManyItemsPrompt()
+	public static void displayHowManyItemsPrompt()
+	{//START displayHowManyItemsPrompt()
+		System.out.println("How many items will you be puchasing today?");
+		System.out.println("NOTE: You can not have more than 10 items.");
+	}//END displayHowManyItemsPrompt()
+
+	//CREATE METHOD displayCustomerReport
+	public static void displayCustomerReport(int borrowedHowManyItems, double borrowedCustomerTotal)
+	{//START displayCustomerReport
+		System.out.printf("%33s\n", "Customer Report");
+		System.out.println("***********************************************************");
+		System.out.printf("%-20s%d\n", "# of Items", borrowedHowManyItems);
+		System.out.printf("%-20s%s%8.2f\n", "Customer Total:", "$", borrowedCustomerTotal);
+		System.out.println("***********************************************************\n\n");
+
+	}//END displayCustomerReport
+}//END CLASS
